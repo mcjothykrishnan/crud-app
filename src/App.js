@@ -1,185 +1,83 @@
-import React, { useState, Fragment } from "react";
-import { nanoid } from "nanoid";
-import "./App.css";
-import data from "./mock-data.json";
-import ReadOnlyRow from "./components/ReadOnlyRow";
-import EditableRow from "./components/EditableRow";
+import { useState } from "react";
+import AddUserForm from "./AddUserForm";
+import UserTable from "./UserTable";
+import EditUserForm from "./EditUserForm";
 
-const App = () => {
-  const [contacts, setContacts] = useState(data);
-  const [addFormData, setAddFormData] = useState({
-    fullName: "",
-    address: "",
-    phoneNumber: "",
+function App() {
+  const usersData = [
+    {
+      id: 1,
+      username: "mcjk",
+      email: "mcjothykrishnan@gmail.com",
+      password: "1qaz1qaz!",
+      confirmPassword: "1qaz1qaz!",
+    },
+  ];
+
+  const addUser = (user) => {
+    user.id = users.length + 1;
+    setUsers([...users, user]);
+  };
+  const deleteUser = (id) => {
+    setUsers(users.filter((user) => user.id !== id));
+    setEditing(false);
+  };
+
+  const [users, setUsers] = useState(usersData);
+  const [editing, setEditing] = useState(false);
+
+  const initialFormState = {
+    id: null,
+    username: "",
     email: "",
-  });
-
-  const [editFormData, setEditFormData] = useState({
-    fullName: "",
-    address: "",
-    phoneNumber: "",
-    email: "",
-  });
-
-  const [editContactId, setEditContactId] = useState(null);
-
-  const handleAddFormChange = (event) => {
-    event.preventDefault();
-
-    const fieldName = event.target.getAttribute("name");
-    const fieldValue = event.target.value;
-
-    const newFormData = { ...addFormData };
-    newFormData[fieldName] = fieldValue;
-
-    setAddFormData(newFormData);
+    birthday: "",
+    password: "",
+    confirmPassword: "",
   };
 
-  const handleEditFormChange = (event) => {
-    event.preventDefault();
+  const [currentUser, setCurrentUser] = useState(initialFormState);
 
-    const fieldName = event.target.getAttribute("name");
-    const fieldValue = event.target.value;
-
-    const newFormData = { ...editFormData };
-    newFormData[fieldName] = fieldValue;
-
-    setEditFormData(newFormData);
+  const editRow = (user) => {
+    setEditing(true);
+    setCurrentUser({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      password: user.password,
+      confirmPassword: user.confirmPassword,
+    });
   };
 
-  const handleAddFormSubmit = (event) => {
-    event.preventDefault();
-
-    const newContact = {
-      id: nanoid(),
-      fullName: addFormData.fullName,
-      address: addFormData.address,
-      phoneNumber: addFormData.phoneNumber,
-      email: addFormData.email,
-    };
-
-    const newContacts = [...contacts, newContact];
-    setContacts(newContacts);
-  };
-
-  const handleEditFormSubmit = (event) => {
-    event.preventDefault();
-
-    const editedContact = {
-      id: editContactId,
-      fullName: editFormData.fullName,
-      address: editFormData.address,
-      phoneNumber: editFormData.phoneNumber,
-      email: editFormData.email,
-    };
-
-    const newContacts = [...contacts];
-
-    const index = contacts.findIndex((contact) => contact.id === editContactId);
-
-    newContacts[index] = editedContact;
-
-    setContacts(newContacts);
-    setEditContactId(null);
-  };
-
-  const handleEditClick = (event, contact) => {
-    event.preventDefault();
-    setEditContactId(contact.id);
-
-    const formValues = {
-      fullName: contact.fullName,
-      address: contact.address,
-      phoneNumber: contact.phoneNumber,
-      email: contact.email,
-    };
-
-    setEditFormData(formValues);
-  };
-
-  const handleCancelClick = () => {
-    setEditContactId(null);
-  };
-
-  const handleDeleteClick = (contactId) => {
-    const newContacts = [...contacts];
-
-    const index = contacts.findIndex((contact) => contact.id === contactId);
-
-    newContacts.splice(index, 1);
-
-    setContacts(newContacts);
+  const updateUser = (id, updatedUser) => {
+    setEditing(false);
+    setUsers(users.map((user) => (user.id === id ? updatedUser : user)));
   };
 
   return (
-    <div className="app-container">
-      <form onSubmit={handleEditFormSubmit}>
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Address</th>
-              <th>Phone Number</th>
-              <th>Email</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {contacts.map((contact) => (
-              <Fragment>
-                {editContactId === contact.id ? (
-                  <EditableRow
-                    editFormData={editFormData}
-                    handleEditFormChange={handleEditFormChange}
-                    handleCancelClick={handleCancelClick}
-                  />
-                ) : (
-                  <ReadOnlyRow
-                    contact={contact}
-                    handleEditClick={handleEditClick}
-                    handleDeleteClick={handleDeleteClick}
-                  />
-                )}
-              </Fragment>
-            ))}
-          </tbody>
-        </table>
-      </form>
-
-      <h2>Add a Contact</h2>
-      <form onSubmit={handleAddFormSubmit}>
-        <input
-          type="text"
-          name="fullName"
-          required="required"
-          placeholder="Enter a name..."
-          onChange={handleAddFormChange}
-        />
-        <input
-          type="text"
-          name="address"
-          required="required"
-          placeholder="Enter an addres..."
-          onChange={handleAddFormChange}
-        />
-        <input
-          type="text"
-          name="phoneNumber"
-          required="required"
-          placeholder="Enter a phone number..."
-          onChange={handleAddFormChange}
-        />
-        <input
-          type="email"
-          name="email"
-          required="required"
-          placeholder="Enter an email..."
-          onChange={handleAddFormChange}
-        />
-        <button type="submit">Add</button>
-      </form>
+    <div className="container">
+      <div className="flex-row">
+        <div className="flex-large">
+          {editing ? (
+            <div>
+              <EditUserForm
+                setEditing={setEditing}
+                currentUser={currentUser}
+                updateUser={updateUser}
+              />
+            </div>
+          ) : (
+            <div>
+              <AddUserForm addUser={addUser} />
+            </div>
+          )}
+        </div>
+        <div className="flex-large">
+          <h2>View users</h2>
+          <UserTable editRow={editRow} deleteUser={deleteUser} users={users} />
+        </div>
+      </div>
     </div>
   );
-};
+}
 
 export default App;

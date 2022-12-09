@@ -1,41 +1,32 @@
-.app-container {
+.app {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 1rem;
-}
-
-table {
-  border-collapse: collapse;
-  width: 100%;
-}
-
-th,
-td {
-  border: 1px solid #ffffff;
-  text-align: left;
-  padding: 8px;
-  font-size: 32px;
-}
-
-th {
-  background-color: rgb(117, 201, 250);
-}
-
-td {
-  background-color: rgb(205, 235, 253);
+  align-items: center;
+  justify-content: center;
 }
 
 form {
-  display: flex;
-  gap: 5px;
+  background-color: white;
+  padding: 0px 60px;
+  border-radius: 10px;
 }
 
-form td:last-child {
-  display: flex;
-  justify-content: space-evenly;
+h1 {
+  color: rgb(77, 1, 77);
+  text-align: center;
 }
 
-form * {
-  font-size: 28px;
+button {
+  width: 100%;
+  height: 50px;
+  padding: 10px;
+  margin: 2px;
+  border: none;
+  background-color: rebeccapurple;
+  color: white;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 18px;
+  cursor: pointer;
+  margin-top: 2px;
+  margin-bottom: 2px;
 }
