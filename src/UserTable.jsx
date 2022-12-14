@@ -3,7 +3,7 @@ const UserTable = (props) => (
     <table class="table table-dark table-hover">
       <thead>
         <tr className="text-center">
-          <th scope="col">#</th>
+       
           <th scope="col">Username</th>
           <th scope="col">Email</th>
           <th scope="col">Password</th>
@@ -15,8 +15,8 @@ const UserTable = (props) => (
         {props.users.length > 0 ? (
           props.users.map((user) => (
             <tr key={user.id} className="text-center">
-              <th scope="row">{user.id}</th>
-              <td>{user.username}</td>
+          
+              <th  scope="row">{user.username}</th>
               <td>{user.email}</td>
               <td>{user.password}</td>
               <td>{user.confirmPassword}</td>

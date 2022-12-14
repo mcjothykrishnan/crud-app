@@ -1,18 +1,30 @@
 import { useEffect, useState } from "react";
 import "./app.css";
-import EditFormInput from "./components/editFormInput";
-
+import "./formInput.css";
 const EditUserForm = (props) => {
   const [user, setUser] = useState(props.currentUser);
-  const initialFormState = {
-    id: null,
-    username: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
+  const [focused, setFocused] = useState(false);
+  useEffect(() => {
+    setUser(props.currentUser);
+  }, [props]);
+  const onChange = (e) => {
+    const { name, value } = e.target;
+    setUser({ ...user, [name]: value });
   };
-  const [values, setValues] = useState(initialFormState);
-
+  const handleFocus = (e) => {
+    setFocused(true);
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (
+      !user.username ||
+      !user.email ||
+      !user.password ||
+      !user.confirmPassword
+    )
+      return;
+    props.updateUser(user.id, user);
+  };
   const inputs = [
     {
       id: 1,
@@ -57,40 +69,27 @@ const EditUserForm = (props) => {
       required: true,
     },
   ];
-  useEffect(() => {
-    setUser(props.currentUser);
-  }, [props]);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (
-      !user.username ||
-      !user.email ||
-      !user.password ||
-      !user.confirmPassword
-    )
-      return;
-    props.updateUser(user.id, user);
-  };
-
-  const onChange = (e) => {
-    const { name, value } = e.target;
-
-    setUser({ ...user, [name]: value });
-    setValues({ ...values, [e.target.name]: e.target.value });
-  };
 
   return (
     <div className="app">
       <form onSubmit={handleSubmit}>
         <h1>Edit Form</h1>
         {inputs.map((input) => (
-          <EditFormInput
-            key={input.id}
-            {...input}
-            value={user[input.name]}
-            onChange={onChange}
-          />
+          <div className="formInput">
+            <label>{input.label}</label>
+            <input
+              {...input}
+              key={input.id}
+              value={user[input.name]}
+              onChange={onChange}
+              onBlur={handleFocus}
+              onFocus={() =>
+                input.name === "confirmPassword" && setFocused(true)
+              }
+              focused={focused.toString()}
+            />
+            <span>{input.errorMessage}</span>
+          </div>
         ))}
         <button>Update user</button>
         <button

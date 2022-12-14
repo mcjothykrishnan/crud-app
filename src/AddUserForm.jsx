@@ -1,7 +1,6 @@
 import { useState } from "react";
 import "./app.css";
-import FormInput from "./components/FormInput";
-
+import "./formInput.css";
 const AddUserForm = (props) => {
   const initialFormState = {
     id: null,
@@ -11,8 +10,27 @@ const AddUserForm = (props) => {
     confirmPassword: "",
   };
   const [user, setUser] = useState(initialFormState);
-
-
+  const [focused, setFocused] = useState(false);
+  const onChange = (e) => {
+      const { name, value } = e.target;
+    setUser({ ...user,[name]: value });
+  };
+  const handleFocus = (e) => {
+      setFocused(true);
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (
+      !user.username ||
+      !user.email ||
+      !user.password ||
+      !user.confirmPassword
+    )
+      return;
+    props.addUser(user);
+    setUser(initialFormState);
+    setFocused(false);
+  };
   const inputs = [
     {
       id: 1,
@@ -58,36 +76,26 @@ const AddUserForm = (props) => {
     },
   ];
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (
-      !user.username ||
-      !user.email ||
-      !user.password ||
-      !user.confirmPassword
-    )
-      return;
-    props.addUser(user);
-    setUser(initialFormState);
-    
-  };
-
-  const onChange = (e) => {
-    setUser({ ...user, [e.target.name]: e.target.value });
-  };
-
   return (
     <div className="app">
       <form onSubmit={handleSubmit}>
         <h1>Register</h1>
         {inputs.map((input) => (
-          <FormInput
-            key={input.id}
-            {...input}
-            value={user[input.name]}
-            onChange={onChange}
-
-          />
+          <div className="formInput">
+            <label>{input.label}</label>
+            <input
+              {...input}
+              key={input.id}
+              value={user[input.name]}
+              onChange={onChange}
+              onBlur={handleFocus}
+              onFocus={() =>
+                input.name === "confirmPassword" && setFocused(true)
+              }
+              focused={focused.toString()}
+            />
+            <span>{input.errorMessage}</span>
+          </div>
         ))}
         <button>Submit</button>
       </form>
