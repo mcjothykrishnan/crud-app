@@ -79,6 +79,7 @@ function MyForm(props) {
       )
         return;
       props.updateUser(user.id, user);
+      setFocused(false);
     } else {
       if (
         !user.username ||
@@ -114,7 +115,7 @@ function MyForm(props) {
             <span>{input.errorMessage}</span>
           </div>
         ))}
-        <button>Submit</button>
+        <button>{props.btn}</button>
       </form>
     </div>
   );

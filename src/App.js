@@ -21,6 +21,7 @@ function App() {
   ];
   const [currentUser, setCurrentUser] = useState(initialFormState);
   const [users, setUsers] = useState(usersData);
+  const [btn, setBtn] = useState("Submit");
 
   const addUser = (user) => {
     user.id = users.length + 1;
@@ -30,6 +31,7 @@ function App() {
     setUsers(users.filter((user) => user.id !== id));
   };
   const editRow = (user) => {
+    setBtn("Update");
     setCurrentUser({
       id: user.id,
       username: user.username,
@@ -41,6 +43,7 @@ function App() {
   const updateUser = (id, updatedUser) => {
     setUsers(users.map((user) => (user.id === id ? updatedUser : user)));
     setCurrentUser(initialFormState);
+    setBtn("Submit");
   };
   return (
     <div className="container">
@@ -49,6 +52,7 @@ function App() {
           currentUser={currentUser}
           updateUser={updateUser}
           addUser={addUser}
+          btn={btn}
         />
         <div className="flex-large">
           <h2>View users</h2>
