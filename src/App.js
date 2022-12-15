@@ -1,9 +1,15 @@
 import { useState } from "react";
-import AddUserForm from "./AddUserForm";
 import UserTable from "./UserTable";
-import EditUserForm from "./EditUserForm";
-
+import MyForm from "./AddEdit";
 function App() {
+  const initialFormState = {
+    id: null,
+    username: "",
+    email: "",
+    birthday: "",
+    password: "",
+    confirmPassword: "",
+  };
   const usersData = [
     {
       id: 1,
@@ -13,6 +19,8 @@ function App() {
       confirmPassword: "1qaz1qaz!",
     },
   ];
+  const [currentUser, setCurrentUser] = useState(initialFormState);
+  const [users, setUsers] = useState(usersData);
 
   const addUser = (user) => {
     user.id = users.length + 1;
@@ -20,25 +28,8 @@ function App() {
   };
   const deleteUser = (id) => {
     setUsers(users.filter((user) => user.id !== id));
-    setEditing(false);
   };
-
-  const [users, setUsers] = useState(usersData);
-  const [editing, setEditing] = useState(false);
-
-  const initialFormState = {
-    id: null,
-    username: "",
-    email: "",
-    birthday: "",
-    password: "",
-    confirmPassword: "",
-  };
-
-  const [currentUser, setCurrentUser] = useState(initialFormState);
-
   const editRow = (user) => {
-    setEditing(true);
     setCurrentUser({
       id: user.id,
       username: user.username,
@@ -47,30 +38,18 @@ function App() {
       confirmPassword: user.confirmPassword,
     });
   };
-
   const updateUser = (id, updatedUser) => {
-    setEditing(false);
     setUsers(users.map((user) => (user.id === id ? updatedUser : user)));
+    setCurrentUser(initialFormState);
   };
-
   return (
     <div className="container">
       <div className="flex-row">
-        <div className="flex-large">
-          {editing ? (
-            <div>
-              <EditUserForm
-                setEditing={setEditing}
-                currentUser={currentUser}
-                updateUser={updateUser}
-              />
-            </div>
-          ) : (
-            <div>
-              <AddUserForm addUser={addUser} />
-            </div>
-          )}
-        </div>
+        <MyForm
+          currentUser={currentUser}
+          updateUser={updateUser}
+          addUser={addUser}
+        />
         <div className="flex-large">
           <h2>View users</h2>
           <UserTable editRow={editRow} deleteUser={deleteUser} users={users} />

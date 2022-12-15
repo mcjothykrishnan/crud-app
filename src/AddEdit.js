@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./app.css";
 import "./formInput.css";
-const AddUserForm = (props) => {
+function MyForm(props) {
   const initialFormState = {
     id: null,
     username: "",
@@ -10,27 +10,7 @@ const AddUserForm = (props) => {
     confirmPassword: "",
   };
   const [user, setUser] = useState(initialFormState);
-  const [focused, setFocused] = useState(false);
-  const onChange = (e) => {
-      const { name, value } = e.target;
-    setUser({ ...user,[name]: value });
-  };
-  const handleFocus = (e) => {
-      setFocused(true);
-  };
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (
-      !user.username ||
-      !user.email ||
-      !user.password ||
-      !user.confirmPassword
-    )
-      return;
-    props.addUser(user);
-    setUser(initialFormState);
-    setFocused(false);
-  };
+
   const inputs = [
     {
       id: 1,
@@ -76,6 +56,43 @@ const AddUserForm = (props) => {
     },
   ];
 
+  const [focused, setFocused] = useState(false);
+  useEffect(() => {
+    setUser(props.currentUser);
+  }, [props]);
+  const onChange = (e) => {
+    const { name, value } = e.target;
+    setUser({ ...user, [name]: value });
+  };
+  const handleFocus = (e) => {
+    setFocused(true);
+  };
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    if (user.id) {
+      if (
+        !user.username ||
+        !user.email ||
+        !user.password ||
+        !user.confirmPassword
+      )
+        return;
+      props.updateUser(user.id, user);
+    } else {
+      if (
+        !user.username ||
+        !user.email ||
+        !user.password ||
+        !user.confirmPassword
+      )
+        return;
+      props.addUser(user);
+      setUser(initialFormState);
+      setFocused(false);
+    }
+  }
+
   return (
     <div className="app">
       <form onSubmit={handleSubmit}>
@@ -101,6 +118,5 @@ const AddUserForm = (props) => {
       </form>
     </div>
   );
-};
-
-export default AddUserForm;
+}
+export default MyForm;
